@@ -1,6 +1,4 @@
-const Item = require("../models/Item");
-
-
+const Item = require("../models/item");
 const createItem = async (req, res) => {
   try {
     const { userId, type, title, date, time, location, description } = req.body;
@@ -39,7 +37,6 @@ const getAllItems = async (req, res) => {
         message: "userId query parameter is required",
       });
     }
-
     const allItems = await Item.find({ userId }).sort({ createdAt: -1 });
 
     res.status(200).json(allItems);
