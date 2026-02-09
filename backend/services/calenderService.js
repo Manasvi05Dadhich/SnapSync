@@ -40,14 +40,14 @@ const createCalendarEvent = async (user, item) => {
 
   const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
 
-  // Build start/end times (1-hour event as a simple default)
+  
   const start = new Date(`${item.date}T${item.time}:00`);
   if (Number.isNaN(start.getTime())) {
     return;
   }
   const end = new Date(start.getTime() + 60 * 60 * 1000);
 
-  const timeZone = "UTC"; // You can adjust this or make it configurable
+  const timeZone = "IST"; 
 
   const event = {
     summary: item.title,
