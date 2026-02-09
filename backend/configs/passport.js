@@ -8,7 +8,10 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       
-      callbackURL: "/api/auth/google/callback",
+      // Use frontend URL so OAuth callback hits same origin as the app (cookie works)
+      callbackURL:
+        (process.env.FRONTEND_URL || "http://localhost:3000") +
+        "/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
       try {

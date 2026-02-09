@@ -1,0 +1,41 @@
+// Use relative URL so requests go through Vite proxy -> same origin as app (cookie works)
+const API = '/api';
+
+export async function fetchMe() {
+  const res = await fetch(`${API}/auth/me`, { credentials: 'include' });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+export async function fetchItems() {
+  const res = await fetch(`${API}/items`, { credentials: 'include' });
+  if (!res.ok) throw new Error('Failed to fetch items');
+  return res.json();
+}
+
+export async function uploadImage(file) {
+  const form = new FormData();
+  form.append('image', file);
+  const res = await fetch(`${API}/extract/image`, {
+    method: 'POST',
+    credentials: 'include',
+    body: form,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || err.message || 'Upload failed');
+  }
+  return res.json();
+}
+
+export async function addItemToCalendar(id) {
+  const res = await fetch(`${API}/items/${id}/add-to-calendar`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || err.message || 'Failed to add to calendar');
+  }
+  return res.json();
+}

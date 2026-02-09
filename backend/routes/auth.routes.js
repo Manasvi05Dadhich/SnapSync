@@ -16,12 +16,12 @@ router.get(
   "/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/api/auth/failure",
-    successRedirect: "/api/auth/success",
+    successRedirect: process.env.FRONTEND_URL || "http://localhost:3000",
   })
 );
 
 router.get("/success", (req, res) => {
-  res.send("Login successful");
+  res.redirect(process.env.FRONTEND_URL || "http://localhost:3000");
 });
 
 router.get("/failure", (req, res) => {
@@ -34,7 +34,7 @@ router.get("/me", (req, res) => {
 
 router.get("/logout", (req, res) => {
   req.logout(() => {
-    res.send("Logged out");
+    res.redirect(process.env.FRONTEND_URL || "http://localhost:3000");
   });
 });
 

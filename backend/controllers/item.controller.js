@@ -1,4 +1,5 @@
 const Item = require("../models/item");
+const { createCalendarEvent } = require("../services/calenderService");
 
 const createItem = async (req, res) => {
   try {
@@ -101,9 +102,40 @@ const deleteItem = async (req, res) => {
   }
 };
 
+const addItemToCalendar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?._id?.toString();
+
+    const item = await Item.findOne({ _id: id, userId });
+    if (!item) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    if (item.addedToCalendar) {
+      return res.status(200).json({
+        message: "Already added to calendar",
+        item,
+      });
+    }
+
+    await createCalendarEvent(req.user, item);
+    item.addedToCalendar = true;
+    await item.save();
+
+    res.status(200).json({ item });
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to add to calendar",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createItem,
   getAllItems,
   updateItem,
   deleteItem,
+  addItemToCalendar,
 };
