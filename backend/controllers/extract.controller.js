@@ -1,7 +1,9 @@
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
 const { extractStructuredData } = require("../services/geminiService");
 const { extractTextFromImage } = require("../services/ocrService");
-const multer = require('multer');
-const path = require('path');
+const Item = require("../models/item");
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -27,19 +29,35 @@ const upload = multer({
 
 const extractFromText = async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, userId } = req.body;
 
     if (!text) {
       return res.status(400).json({
         message: "Text is required",
       });
     }
+    if (!userId) {
+      return res.status(400).json({
+        message: "userId is required",
+      });
+    }
 
     const extractedData = await extractStructuredData(text);
 
-    res.status(200).json({
+    const item = await Item.create({
+      userId,
+      type: extractedData.type || "note",
+      title: extractedData.title || "Untitled",
+      date: extractedData.date || null,
+      time: extractedData.time || null,
+      location: extractedData.location || null,
+      description: extractedData.description || "",
+    });
+
+    res.status(201).json({
       success: true,
       data: extractedData,
+      item,
     });
   } catch (error) {
     res.status(500).json({
@@ -57,10 +75,24 @@ const extractFromImage = async (req, res) => {
       });
     }
 
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({
+        message: "userId is required (send as form-data field)",
+      });
+    }
+
     const imagePath = req.file.path;
 
     // Extract text from image using OCR
     const extractedText = await extractTextFromImage(imagePath);
+
+    // Delete uploaded file after OCR (no longer needed)
+    try {
+      fs.unlinkSync(imagePath);
+    } catch (err) {
+      // Ignore deletion errors - response still succeeds
+    }
 
     if (!extractedText) {
       return res.status(502).json({
@@ -77,10 +109,21 @@ const extractFromImage = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    const item = await Item.create({
+      userId,
+      type: extractedData.type || "note",
+      title: extractedData.title || "Untitled",
+      date: extractedData.date || null,
+      time: extractedData.time || null,
+      location: extractedData.location || null,
+      description: extractedData.description || "",
+    });
+
+    res.status(201).json({
       success: true,
       data: extractedData,
-      extractedText: extractedText, // Optional: include the raw OCR text
+      extractedText: extractedText,
+      item,
     });
 
   } catch (error) {
