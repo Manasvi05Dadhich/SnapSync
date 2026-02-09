@@ -15,13 +15,21 @@ passport.use(
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          user = await User.create({
+          user = new User({
             googleId: profile.id,
             email: profile.emails[0].value,
             name: profile.displayName,
             photo: profile.photos[0].value,
           });
         }
+
+        // Always update access token; only overwrite refresh token if we get a new one
+        user.accessToken = accessToken;
+        if (refreshToken) {
+          user.refreshToken = refreshToken;
+        }
+
+        await user.save();
 
         done(null, user);
       } catch (err) {

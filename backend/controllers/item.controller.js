@@ -1,11 +1,13 @@
 const Item = require("../models/item");
+
 const createItem = async (req, res) => {
   try {
-    const { userId, type, title, date, time, location, description } = req.body;
+    const userId = req.user?._id?.toString();
+    const { type, title, date, time, location, description } = req.body;
 
     if (!userId || !type || !title) {
       return res.status(400).json({
-        message: "userId, type and title are required fields",
+        message: "type and title are required, and user must be authenticated",
       });
     }
 
@@ -13,10 +15,10 @@ const createItem = async (req, res) => {
       userId,
       type,
       title,
-      date,
-      time,
-      location,
-      description,
+      date: date || null,
+      time: time || null,
+      location: location || null,
+      description: description || "",
     });
 
     res.status(201).json(newItem);
@@ -30,13 +32,14 @@ const createItem = async (req, res) => {
 
 const getAllItems = async (req, res) => {
   try {
-    const { userId } = req.query;
+    const userId = req.user?._id?.toString();
 
     if (!userId) {
-      return res.status(400).json({
-        message: "userId query parameter is required",
+      return res.status(401).json({
+        message: "Not authenticated",
       });
     }
+
     const allItems = await Item.find({ userId }).sort({ createdAt: -1 });
 
     res.status(200).json(allItems);
@@ -48,13 +51,13 @@ const getAllItems = async (req, res) => {
   }
 };
 
-
 const updateItem = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id?.toString();
 
-    const updatedItem = await Item.findByIdAndUpdate(
-      id,
+    const updatedItem = await Item.findOneAndUpdate(
+      { _id: id, userId },
       req.body,
       { new: true, runValidators: true }
     );
@@ -74,12 +77,12 @@ const updateItem = async (req, res) => {
   }
 };
 
-
 const deleteItem = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id?.toString();
 
-    const deletedItem = await Item.findByIdAndDelete(id);
+    const deletedItem = await Item.findOneAndDelete({ _id: id, userId });
 
     if (!deletedItem) {
       return res.status(404).json({

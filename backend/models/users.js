@@ -22,6 +22,14 @@ const userSchema = new mongoose.Schema(
     photo: {
       type: String,
     },
+
+    // Tokens for Google APIs (e.g. Calendar)
+    accessToken: {
+      type: String,
+    },
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

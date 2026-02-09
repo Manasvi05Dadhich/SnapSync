@@ -3,6 +3,7 @@ const path = require("path");
 const multer = require("multer");
 const { extractStructuredData } = require("../services/geminiService");
 const { extractTextFromImage } = require("../services/ocrService");
+const { createCalendarEvent } = require("../services/calenderService");
 const Item = require("../models/item");
 
 // Configure multer for file uploads
@@ -29,7 +30,8 @@ const upload = multer({
 
 const extractFromText = async (req, res) => {
   try {
-    const { text, userId } = req.body;
+    const { text } = req.body;
+    const userId = req.user?._id?.toString();
 
     if (!text) {
       return res.status(400).json({
@@ -37,8 +39,8 @@ const extractFromText = async (req, res) => {
       });
     }
     if (!userId) {
-      return res.status(400).json({
-        message: "userId is required",
+      return res.status(401).json({
+        message: "Not authenticated",
       });
     }
 
@@ -53,6 +55,17 @@ const extractFromText = async (req, res) => {
       location: extractedData.location || null,
       description: extractedData.description || "",
     });
+
+    // If this is an event, try to create a calendar entry
+    if (extractedData.type === "event") {
+      try {
+        await createCalendarEvent(req.user, item);
+        item.addedToCalendar = true;
+        await item.save();
+      } catch (err) {
+        // Calendar failure should not break core flow
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -75,10 +88,10 @@ const extractFromImage = async (req, res) => {
       });
     }
 
-    const { userId } = req.body;
+    const userId = req.user?._id?.toString();
     if (!userId) {
-      return res.status(400).json({
-        message: "userId is required (send as form-data field)",
+      return res.status(401).json({
+        message: "Not authenticated",
       });
     }
 
@@ -119,13 +132,23 @@ const extractFromImage = async (req, res) => {
       description: extractedData.description || "",
     });
 
+    // If this is an event, try to create a calendar entry
+    if (extractedData.type === "event") {
+      try {
+        await createCalendarEvent(req.user, item);
+        item.addedToCalendar = true;
+        await item.save();
+      } catch (err) {
+        // Calendar failure should not break core flow
+      }
+    }
+
     res.status(201).json({
       success: true,
       data: extractedData,
       extractedText: extractedText,
       item,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Image extraction failed",

@@ -1,10 +1,15 @@
 const express = require("express");
 const passport = require("passport");
+
 const router = express.Router();
 
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email", "https://www.googleapis.com/auth/calendar.events"],
+    accessType: "offline",
+    prompt: "consent",
+  })
 );
 
 router.get(
