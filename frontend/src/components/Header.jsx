@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Bell, CheckSquare, LogOut, Inbox } from 'lucide-react';
+import { Calendar, Bell, CheckSquare, LogOut, Inbox, FileText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const nav = [
   { path: '/bucket', label: 'Bucket', icon: Inbox },
+  { path: '/notes', label: 'Notes', icon: FileText },
   { path: '/events', label: 'Events', icon: Calendar },
   { path: '/reminders', label: 'Reminders', icon: Bell },
   { path: '/tasks', label: 'Tasks', icon: CheckSquare },
@@ -39,13 +40,25 @@ export default function Header({ pageTitle, action }) {
 
         <div className="flex items-center gap-2">
           {action}
-          <button
-            onClick={logout}
-            className="p-2 text-gray-500 hover:text-gray-800 rounded-md"
-            title="Log out"
-          >
-            <LogOut className="w-5 h-5" />
-          </button>
+          {isCalendarConnected ? (
+            <a
+              href="https://calendar.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-gray-500 hover:text-gray-800 rounded-md"
+              title="Open Google Calendar"
+            >
+              <Calendar className="w-5 h-5" />
+            </a>
+          ) : (
+            <a
+              href="/api/auth/google"
+              className="p-2 text-gray-500 hover:text-gray-800 rounded-md"
+              title="Connect Google Calendar"
+            >
+              <Calendar className="w-5 h-5" />
+            </a>
+          )}
         </div>
       </div>
     </header>

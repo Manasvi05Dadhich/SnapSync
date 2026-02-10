@@ -7,7 +7,7 @@ import { Bell } from 'lucide-react';
 export default function RemindersPage() {
   const { items, loading } = useItems();
   const { isCalendarConnected } = useAuth();
-  const reminders = items.filter((i) => i.type === 'note');
+  const reminders = items.filter((i) => i.type === 'reminder');
 
   return (
     <div className="min-h-screen bg-gray-50">

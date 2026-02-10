@@ -27,7 +27,7 @@ const Home = () => {
       <div className="relative overflow-hidden" style={{ minHeight: '600px' }}>
         <div className="absolute inset-0">
           <DarkVeil
-            hueShift={0}
+            hueShift={0.8}
             noiseIntensity={0}
             scanlineIntensity={0}
             speed={0.5}

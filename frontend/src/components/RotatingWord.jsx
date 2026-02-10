@@ -23,5 +23,5 @@ export default function RotatingWord() {
     return () => clearInterval(timer);
   }, [word]);
 
-  return <span className="font-serif italic text-lavender">{display}</span>;
+  return <span className="font-sans italic text-gray-900">{display}</span>;
 }
