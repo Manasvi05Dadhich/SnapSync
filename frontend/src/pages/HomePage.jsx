@@ -10,12 +10,12 @@ export default function HomePage() {
 
       <section className="relative pt-24 pb-20 px-4" style={{ minHeight: '600px' }}>
         {/* DarkVeil Animated Background */}
-        <div className="absolute inset-0" style={{ opacity: 0.4 }}>
+        <div className="absolute inset-0" style={{ opacity: 0.675 }}>
           <DarkVeil
-            hueShift={30}
+            hueShift={50}
             noiseIntensity={0}
             scanlineIntensity={0}
-            speed={0.5}
+            speed={0.4}
             scanlineFrequency={0}
             warpAmount={0}
           />

@@ -14,7 +14,7 @@ export default function Header({ pageTitle, action }) {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-200/80">
+    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/20">
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 text-gray-800 font-semibold">
           <span className="text-lavender text-xl">◇</span>
@@ -26,11 +26,10 @@ export default function Header({ pageTitle, action }) {
             <Link
               key={path}
               to={path}
-              className={`px-3 py-1.5 rounded-md text-sm ${
-                location.pathname === path
-                  ? 'text-lavender font-medium bg-lavender-subtle'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-              }`}
+              className={`px-3 py-1.5 rounded-md text-sm ${location.pathname === path
+                ? 'text-lavender font-medium bg-lavender-subtle'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}
             >
               {Icon && <Icon className="inline-block w-4 h-4 mr-1.5 -mt-0.5" />}
               {label}
