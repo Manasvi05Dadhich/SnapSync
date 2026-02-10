@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Upload } from 'lucide-react';
+import DarkVeil from '../components/DarkVeil';
 
 const Home = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -22,31 +23,40 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section with Aura Background */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-lavender/20 via-soft-pink/10 to-warm-orange/20 blur-3xl"></div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <h1 className="text-4xl md:text-6xl font-inter font-semibold text-gray-900 mb-4">
+      {/* Hero Section with DarkVeil Background */}
+      <div className="relative overflow-hidden" style={{ minHeight: '600px' }}>
+        <div className="absolute inset-0">
+          <DarkVeil
+            hueShift={0}
+            noiseIntensity={0}
+            scanlineIntensity={0}
+            speed={0.5}
+            scanlineFrequency={0}
+            warpAmount={0}
+          />
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <h1 className="text-4xl md:text-6xl font-inter font-semibold text-white mb-4">
             Turn screenshots into{' '}
             <span className="font-instrument-serif text-lavender typewriter">events</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-white/80 mb-8">
             Upload a screenshot and we'll turn it into something actionable.
           </p>
-          <p className="text-sm text-gray-500 mb-12">
+          <p className="text-sm text-white/60 mb-12">
             Screenshots are deleted immediately after processing.
           </p>
 
           {/* Upload Zone */}
           {!showOptions && (
             <div className="max-w-md mx-auto">
-              <label className="block w-full p-8 border-2 border-dashed border-lavender rounded-lg cursor-pointer hover:border-lavender/80 transition-colors">
+              <label className="block w-full p-8 border-2 border-dashed border-white/40 rounded-lg cursor-pointer hover:border-white/70 transition-colors bg-white/10 backdrop-blur-sm">
                 <div className="text-center">
                   <Upload size={48} className="mx-auto text-lavender mb-4" />
-                  <p className="text-lg font-medium text-gray-900 mb-2">
+                  <p className="text-lg font-medium text-white mb-2">
                     Drop a screenshot here or click to upload
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-white/60">
                     Processed once. Deleted immediately.
                   </p>
                 </div>
@@ -63,7 +73,7 @@ const Home = () => {
           {/* Creation Options */}
           {showOptions && (
             <div className="max-w-md mx-auto">
-              <p className="text-lg font-medium text-gray-900 mb-4">What would you like to create?</p>
+              <p className="text-lg font-medium text-white mb-4">What would you like to create?</p>
               <div className="space-y-3">
                 <button
                   onClick={() => handleCreate('Event')}
