@@ -1,22 +1,25 @@
 import { useState } from 'react';
-import { addItemToCalendar } from '../lib/api';
+import { addItemToCalendar, deleteItem } from '../lib/api';
 import { useItems } from '../context/ItemsContext';
-import { CalendarPlus, Check } from 'lucide-react';
+import { CalendarPlus, Check, Trash2 } from 'lucide-react';
 
 const typeColors = {
-  event: 'text-lavender',
-  note: 'text-soft-pink',
-  task: 'text-warm-orange',
+  event: 'text-slate-700',
+  note: 'text-slate-700',
+  task: 'text-slate-700',
+  reminder: 'text-slate-700',
 };
 
 const typeLabels = {
   event: 'Event',
-  note: 'Reminder',
+  note: 'Note',
   task: 'Task',
+  reminder: 'Reminder',
 };
 
 export default function ItemRow({ item }) {
   const [adding, setAdding] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState(null);
   const { refetch } = useItems();
 
@@ -38,44 +41,67 @@ export default function ItemRow({ item }) {
     }
   };
 
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+    setDeleting(true);
+    setError(null);
+    try {
+      await deleteItem(item._id);
+      refetch();
+    } catch (err) {
+      setError(err.message);
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="py-4 border-b border-gray-100 last:border-0">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="font-medium text-gray-900">{item.title}</h3>
-          <p className={`text-sm ${typeColors[item.type] || 'text-gray-500'}`}>
-            {typeLabels[item.type] || item.type}
-          </p>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full bg-slate-100 ${typeColors[item.type]}`}>
+              {typeLabels[item.type] || item.type}
+            </span>
+          </div>
+          <h3 className="font-medium text-slate-900">{item.title}</h3>
           {(item.date || item.time || item.location) && (
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               {[item.date, item.time, item.location].filter(Boolean).join(' · ')}
             </p>
           )}
           {item.description && (
-            <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+            <p className="text-sm text-slate-600 mt-1">{item.description}</p>
           )}
         </div>
-        <div>
+        <div className="flex items-center gap-2">
           {item.addedToCalendar ? (
-            <span className="flex items-center gap-1 text-sm text-green-600">
-              <Check className="w-4 h-4" /> Added
+            <span className="flex items-center gap-1 text-xs text-green-600">
+              <Check className="w-3.5 h-3.5" /> Added
             </span>
           ) : (
             <button
               onClick={handleAddToCalendar}
               disabled={adding}
-              className="flex items-center gap-1 text-sm text-lavender hover:underline disabled:opacity-50"
+              className="flex items-center gap-1 text-xs text-slate-600 hover:text-slate-900 disabled:opacity-50 transition-colors"
             >
               {adding ? 'Adding...' : (
                 <>
-                  <CalendarPlus className="w-4 h-4" /> Add to Calendar
+                  <CalendarPlus className="w-3.5 h-3.5" /> Add
                 </>
               )}
             </button>
           )}
-          {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+            title="Delete item"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </div>
+      {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
     </div>
   );
 }

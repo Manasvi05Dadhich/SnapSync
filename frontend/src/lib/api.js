@@ -39,3 +39,12 @@ export async function addItemToCalendar(id) {
   }
   return res.json();
 }
+
+export async function deleteItem(itemId) {
+  const res = await fetch(`${API}/items/${itemId}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  if (!res.ok) throw new Error('Failed to delete item');
+  return res.json();
+}

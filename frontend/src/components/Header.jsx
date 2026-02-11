@@ -15,51 +15,40 @@ export default function Header({ pageTitle, action }) {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-lg border-b border-slate-200/60">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-transform">
-            <span className="text-white text-lg font-bold">S</span>
-          </div>
-          <span className="text-xl font-display font-semibold text-slate-900">SnapSync</span>
+    <header className="fixed top-0 left-0 right-0 z-50 pt-2 px-6">
+      <div className="max-w-4xl mx-auto bg-white/70 backdrop-blur-xl rounded-full px-5 py-1.5 flex items-center justify-between border border-white/20">
+        <Link to="/" className="flex items-center gap-2 group">
+          <span className="text-base font-display font-semibold text-slate-900">SnapSync</span>
         </Link>
 
-        <nav className="flex items-center gap-1">
-          {nav.slice(1).map(({ path, label, icon: Icon }) => (
-            <Link
-              key={path}
-              to={path}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === path
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
-                }`}
-            >
-              <Icon size={16} />
-              <span>{label}</span>
-            </Link>
-          ))}
-        </nav>
+        <div className="flex items-center gap-4">
+          <Link
+            to="/bucket"
+            className={`text-sm font-medium transition-colors ${location.pathname === '/bucket'
+                ? 'text-slate-900'
+                : 'text-slate-600 hover:text-slate-900'
+              }`}
+          >
+            Bucket
+          </Link>
 
-        <div className="flex items-center gap-3">
-          {action}
           {isCalendarConnected ? (
             <a
               href="https://calendar.google.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               title="Open Google Calendar"
             >
-              <Calendar className="w-5 h-5" />
+              Calendar
             </a>
           ) : (
             <a
               href="/api/auth/google"
-              className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-lg text-sm font-medium hover:bg-accent-primary/90 transition-colors shadow-sm"
+              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               title="Connect Google Calendar"
             >
-              <Calendar size={16} />
-              <span>Connect</span>
+              Calendar
             </a>
           )}
         </div>
