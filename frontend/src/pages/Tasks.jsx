@@ -1,14 +1,14 @@
 import { CheckSquare } from 'lucide-react';
 
 const Tasks = () => {
-  // Mock data
+
   const tasks = [
     { id: 1, title: 'Review code changes', completed: false },
     { id: 2, title: 'Update documentation', completed: true },
   ];
 
   return (
-    <div className="pt-16 min-h-screen bg-white">
+    <div className="pt-16 min-h-screen bg-cream">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center space-x-2 mb-8">
           <CheckSquare size={24} className="text-soft-pink" />

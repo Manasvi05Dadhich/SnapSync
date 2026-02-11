@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const words = ['events', 'reminders', 'tasks'];
+const words = ['events', 'notes', 'reminders', '&tasks'];
 
 export default function RotatingWord() {
   const [index, setIndex] = useState(0);
@@ -23,5 +23,9 @@ export default function RotatingWord() {
     return () => clearInterval(timer);
   }, [word]);
 
-  return <span className="font-sans italic text-gray-900">{display}</span>;
+  return (
+    <span className="font-display italic text-slate-900">
+      {display}
+    </span>
+  );
 }

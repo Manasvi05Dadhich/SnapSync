@@ -7,21 +7,35 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Playfair Display', 'serif'],
-        serif: ['Instrument Serif', 'serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Fraunces', 'serif'],
       },
       colors: {
-        lavender: {
-          DEFAULT: '#C5B4E3',
-          light: '#E8E0F5',
-          subtle: '#F3EFF9',
+        cream: {
+          DEFAULT: '#FAF9F6',
+          dark: '#F5F4F1',
         },
-        'soft-pink': {
-          DEFAULT: '#F5B8C4',
+        slate: {
+          50: '#F8FAFC',
+          100: '#F1F5F9',
+          200: '#E2E8F0',
+          300: '#CBD5E1',
+          400: '#94A3B8',
+          500: '#64748B',
+          600: '#475569',
+          700: '#334155',
+          800: '#1E293B',
+          900: '#0F172A',
         },
-        'warm-orange': {
-          DEFAULT: '#F4A261',
+        accent: {
+          primary: '#6366F1', // Indigo
+          secondary: '#EC4899', // Pink
+          tertiary: '#F59E0B', // Amber
         },
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
       },
     },
   },

@@ -17,7 +17,7 @@ export default function UploadZone() {
       try {
         const data = await uploadImage(file);
         setResult(data);
-        // Automatically refetch items so they show up in Notes/Events/Tasks/Reminders
+        
         refetch();
       } catch (err) {
         setResult({ error: err.message });

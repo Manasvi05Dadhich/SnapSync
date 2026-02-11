@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Bell, CheckSquare, LogOut, Inbox, FileText } from 'lucide-react';
+import { Calendar, Bell, CheckSquare, Inbox, FileText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const nav = [
@@ -15,37 +15,39 @@ export default function Header({ pageTitle, action }) {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md border-b border-white/20">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 text-gray-800 font-semibold">
-          <span className="text-lavender text-xl">◇</span>
-          <span>SnapSync</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-cream/95 backdrop-blur-lg border-b border-slate-200/60">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2.5 group">
+          <div className="w-9 h-9 bg-gradient-to-br from-accent-primary to-accent-secondary rounded-xl flex items-center justify-center transform group-hover:scale-105 transition-transform">
+            <span className="text-white text-lg font-bold">S</span>
+          </div>
+          <span className="text-xl font-display font-semibold text-slate-900">SnapSync</span>
         </Link>
 
-        <nav className="flex items-center gap-1 overflow-x-auto">
+        <nav className="flex items-center gap-1">
           {nav.slice(1).map(({ path, label, icon: Icon }) => (
             <Link
               key={path}
               to={path}
-              className={`px-3 py-1.5 rounded-md text-sm ${location.pathname === path
-                ? 'text-lavender font-medium bg-lavender-subtle'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${location.pathname === path
+                  ? 'bg-slate-900 text-white shadow-sm'
+                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                 }`}
             >
-              {Icon && <Icon className="inline-block w-4 h-4 mr-1.5 -mt-0.5" />}
-              {label}
+              <Icon size={16} />
+              <span>{label}</span>
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {action}
           {isCalendarConnected ? (
             <a
               href="https://calendar.google.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-gray-500 hover:text-gray-800 rounded-md"
+              className="p-2.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
               title="Open Google Calendar"
             >
               <Calendar className="w-5 h-5" />
@@ -53,10 +55,11 @@ export default function Header({ pageTitle, action }) {
           ) : (
             <a
               href="/api/auth/google"
-              className="p-2 text-gray-500 hover:text-gray-800 rounded-md"
+              className="flex items-center gap-2 px-4 py-2 bg-accent-primary text-white rounded-lg text-sm font-medium hover:bg-accent-primary/90 transition-colors shadow-sm"
               title="Connect Google Calendar"
             >
-              <Calendar className="w-5 h-5" />
+              <Calendar size={16} />
+              <span>Connect</span>
             </a>
           )}
         </div>

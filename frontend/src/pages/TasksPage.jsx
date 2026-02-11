@@ -10,19 +10,8 @@ export default function TasksPage() {
   const tasks = items.filter((i) => i.type === 'task');
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header
-        pageTitle="Tasks"
-        action={
-          isCalendarConnected ? (
-            <span className="flex items-center gap-1.5 text-sm text-green-600">Connected ✔</span>
-          ) : (
-            <a href="/api/auth/google" className="flex items-center gap-1.5 text-sm text-lavender hover:underline">
-              Connect Google Calendar
-            </a>
-          )
-        }
-      />
+    <div className="min-h-screen bg-cream">
+      <Header pageTitle="Tasks" />
       <main className="pt-20 px-4 pb-12 max-w-3xl mx-auto">
         <h1 className="text-2xl font-semibold text-gray-900 mb-6 flex items-center gap-2">
           <CheckSquare className="w-6 h-6 text-warm-orange" /> Tasks

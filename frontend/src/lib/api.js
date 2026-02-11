@@ -1,4 +1,4 @@
-// Use relative URL so requests go through Vite proxy -> same origin as app (cookie works)
+
 const API = '/api';
 
 export async function fetchMe() {

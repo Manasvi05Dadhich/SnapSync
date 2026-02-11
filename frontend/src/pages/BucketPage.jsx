@@ -6,7 +6,7 @@ export default function BucketPage() {
   const { items, loading } = useItems();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-cream">
       <Header pageTitle="Your bucket" />
       <main className="pt-20 px-4 pb-12 max-w-3xl mx-auto">
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">Your bucket</h1>

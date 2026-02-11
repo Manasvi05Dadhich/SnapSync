@@ -12,7 +12,7 @@ function AppContent() {
   const { loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-cream">
         <p className="text-gray-500">Loading...</p>
       </div>
     );

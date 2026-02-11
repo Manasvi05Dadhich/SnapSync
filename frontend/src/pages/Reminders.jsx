@@ -1,14 +1,14 @@
 import { Bell } from 'lucide-react';
 
 const Reminders = () => {
-  // Mock data
+
   const reminders = [
     { id: 1, title: 'Call dentist', date: '2023-10-15 09:00' },
     { id: 2, title: 'Buy groceries', date: '2023-10-16 18:00' },
   ];
 
   return (
-    <div className="pt-16 min-h-screen bg-white">
+    <div className="pt-16 min-h-screen bg-cream">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center space-x-2 mb-8">
           <Bell size={24} className="text-warm-orange" />
