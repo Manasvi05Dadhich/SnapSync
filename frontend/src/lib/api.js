@@ -48,3 +48,14 @@ export async function deleteItem(itemId) {
   if (!res.ok) throw new Error('Failed to delete item');
   return res.json();
 }
+
+export async function updateItem(itemId, updates) {
+  const res = await fetch(`${API}/items/${itemId}`, {
+    method: 'PUT',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(updates),
+  });
+  if (!res.ok) throw new Error('Failed to update item');
+  return res.json();
+}

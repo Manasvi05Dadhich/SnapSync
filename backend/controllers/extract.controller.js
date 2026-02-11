@@ -56,17 +56,6 @@ const extractFromText = async (req, res) => {
       description: extractedData.description || "",
     });
 
-    // If this is an event, try to create a calendar entry
-    if (extractedData.type === "event") {
-      try {
-        await createCalendarEvent(req.user, item);
-        item.addedToCalendar = true;
-        await item.save();
-      } catch (err) {
-        // Calendar failure should not break core flow
-      }
-    }
-
     res.status(201).json({
       success: true,
       data: extractedData,
@@ -131,17 +120,6 @@ const extractFromImage = async (req, res) => {
       location: extractedData.location || null,
       description: extractedData.description || "",
     });
-
-    // If this is an event, try to create a calendar entry
-    if (extractedData.type === "event") {
-      try {
-        await createCalendarEvent(req.user, item);
-        item.addedToCalendar = true;
-        await item.save();
-      } catch (err) {
-        // Calendar failure should not break core flow
-      }
-    }
 
     res.status(201).json({
       success: true,

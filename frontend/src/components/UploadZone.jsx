@@ -17,7 +17,7 @@ export default function UploadZone() {
       try {
         const data = await uploadImage(file);
         setResult(data);
-        
+
         refetch();
       } catch (err) {
         setResult({ error: err.message });
@@ -120,12 +120,20 @@ export default function UploadZone() {
 
           <div className="mt-4 pt-4 border-t border-gray-100">
             <p className="text-xs text-gray-500 mb-3">Saved to your bucket</p>
-            <button
-              onClick={() => { refetch(); setResult(null); }}
-              className="text-sm text-lavender font-medium hover:underline"
-            >
-              Upload another
-            </button>
+            <div className="flex gap-3">
+              <a
+                href="/bucket"
+                className="flex-1 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors text-center"
+              >
+                Go to Bucket
+              </a>
+              <button
+                onClick={() => { refetch(); setResult(null); }}
+                className="flex-1 px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Upload Another
+              </button>
+            </div>
           </div>
         </div>
       )}

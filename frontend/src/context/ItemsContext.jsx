@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { fetchItems } from '../lib/api';
+import { fetchItems, updateItem } from '../lib/api';
 
 const ItemsContext = createContext(null);
 
@@ -23,7 +23,7 @@ export function ItemsProvider({ children }) {
   }, []);
 
   return (
-    <ItemsContext.Provider value={{ items, loading, refetch }}>
+    <ItemsContext.Provider value={{ items, loading, refetch, updateItem }}>
       {children}
     </ItemsContext.Provider>
   );
