@@ -31,11 +31,19 @@ export default function ItemRow({ item }) {
       await addItemToCalendar(item._id);
       refetch();
     } catch (err) {
-      if (err.message?.includes('refresh')) {
+      // Check if error is related to Google Calendar authentication
+      const errorMessage = err.message || 'Failed to add to calendar';
+
+      if (errorMessage.includes('reconnect') ||
+        errorMessage.includes('expired') ||
+        errorMessage.includes('invalid_grant')) {
+        // Redirect to re-authenticate with Google
         window.location.href = '/api/auth/google';
         return;
       }
-      setError(err.message);
+
+      // Show the specific error message to the user
+      setError(errorMessage);
     } finally {
       setAdding(false);
     }
