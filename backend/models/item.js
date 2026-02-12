@@ -11,7 +11,7 @@ const itemSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["event", "task", "note"],
+      enum: ["event", "task", "note", "reminder"],
       required: true,
     },
 

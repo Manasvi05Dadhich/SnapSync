@@ -15,7 +15,7 @@ const extractStructuredData = async (text) => {
     You are an intelligent assistant that extracts structured data from text.
 
     Analyze the following text and extract information into a JSON object with the following keys:
-    - type: one of "event", "task", or "note"
+    - type: one of "event", "task", "note", or "reminder"
     - title: a brief title for the item
     - date: the date in ISO format (YYYY-MM-DD). If year is not mentioned, use ${currentYear}. If no date is found, use null.
     - time: the time in 24-hour format (HH:mm). Convert 12-hour format to 24-hour (e.g., "1 PM" becomes "13:00", "1:30 PM" becomes "13:30"). If no time is found, use null.
