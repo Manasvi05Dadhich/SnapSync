@@ -10,7 +10,7 @@ const protect = require("../middleware/protect");
 
 const router = express.Router();
 
-n
+
 router.use(protect);
 
 router.post("/", createItem);

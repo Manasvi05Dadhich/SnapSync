@@ -17,7 +17,7 @@ router.post("/subscribe", protect, async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
-        s
+
         const exists = user.pushSubscriptions.some(
             (sub) => sub.endpoint === subscription.endpoint
         );
