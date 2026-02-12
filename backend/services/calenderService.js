@@ -85,6 +85,12 @@ const createCalendarEvent = async (user, item) => {
       dateTime: endDateTime.toISOString(),
       timeZone,
     },
+    conferenceData: {
+      createRequest: {
+        requestId: `snapsync-${item._id || Date.now()}`,
+        conferenceSolutionKey: { type: "hangoutsMeet" },
+      },
+    },
     reminders: {
       useDefault: false,
       overrides: [
@@ -101,6 +107,7 @@ const createCalendarEvent = async (user, item) => {
     const response = await calendar.events.insert({
       calendarId: "primary",
       requestBody: event,
+      conferenceDataVersion: 1, // Required to create Google Meet link
     });
 
     console.log("Calendar event created successfully:", {
