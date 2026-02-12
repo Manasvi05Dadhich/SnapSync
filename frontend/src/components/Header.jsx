@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Bell, CheckSquare, Inbox, FileText } from 'lucide-react';
+import { Calendar, Bell, BellRing, CheckSquare, Inbox, FileText, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import useNotifications from '../hooks/useNotifications';
 
 const nav = [
   { path: '/bucket', label: 'Bucket', icon: Inbox },
@@ -13,6 +14,15 @@ const nav = [
 export default function Header({ pageTitle, action }) {
   const { logout, isCalendarConnected } = useAuth();
   const location = useLocation();
+  const { supported, permission, subscribed, loading, subscribe, unsubscribe } = useNotifications();
+
+  const handleNotificationToggle = async () => {
+    if (subscribed) {
+      await unsubscribe();
+    } else {
+      await subscribe();
+    }
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 pt-2 px-6">
@@ -25,8 +35,8 @@ export default function Header({ pageTitle, action }) {
           <Link
             to="/bucket"
             className={`text-sm font-medium transition-colors ${location.pathname === '/bucket'
-                ? 'text-slate-900'
-                : 'text-slate-600 hover:text-slate-900'
+              ? 'text-slate-900'
+              : 'text-slate-600 hover:text-slate-900'
               }`}
           >
             Bucket
@@ -51,8 +61,30 @@ export default function Header({ pageTitle, action }) {
               Calendar
             </a>
           )}
+
+          {/* Notification toggle */}
+          {supported && permission !== 'denied' && (
+            <button
+              onClick={handleNotificationToggle}
+              disabled={loading}
+              className={`p-1.5 rounded-full transition-colors ${subscribed
+                ? 'text-lavender hover:bg-lavender-subtle'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+              title={subscribed ? 'Notifications on — click to disable' : 'Enable notifications'}
+            >
+              {loading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : subscribed ? (
+                <BellRing className="w-4 h-4" />
+              ) : (
+                <Bell className="w-4 h-4" />
+              )}
+            </button>
+          )}
         </div>
       </div>
     </header>
   );
 }
+

@@ -7,8 +7,8 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      
-      // Use frontend URL so OAuth callback hits same origin as the app (cookie works)
+
+
       callbackURL:
         (process.env.FRONTEND_URL || "http://localhost:3000") +
         "/api/auth/google/callback",
@@ -26,7 +26,7 @@ passport.use(
           });
         }
 
-        // Always update access token; only overwrite refresh token if we get a new one
+
         user.accessToken = accessToken;
         if (refreshToken) {
           user.refreshToken = refreshToken;

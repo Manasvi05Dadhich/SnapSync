@@ -8,7 +8,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const extractStructuredData = async (text) => {
   const model = genAI.getGenerativeModel({ model: "	gemini-2.5-flash-lite" });
 
-  // Get current year for date inference
+
   const currentYear = new Date().getFullYear();
 
   const prompt = `
@@ -42,7 +42,6 @@ const extractStructuredData = async (text) => {
   const result = await model.generateContent(prompt);
   const response = result.response.text();
 
-  // Clean the response by removing markdown code block formatting
   const cleanedResponse = response.replace(/```json\n?/, '').replace(/\n?```$/, '');
 
   return JSON.parse(cleanedResponse);

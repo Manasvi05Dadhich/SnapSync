@@ -55,6 +55,12 @@ const itemSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    notifiedAt: {
+      type: Map,
+      of: Date,
+      default: {},
+    },
   },
   {
     timestamps: true,

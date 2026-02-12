@@ -6,10 +6,10 @@ const { extractTextFromImage } = require("../services/ocrService");
 const { createCalendarEvent } = require("../services/calenderService");
 const Item = require("../models/item");
 
-// Configure multer for file uploads
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // Ensure this directory exists
+    cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+  limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
@@ -86,14 +86,13 @@ const extractFromImage = async (req, res) => {
 
     const imagePath = req.file.path;
 
-    // Extract text from image using OCR
+
     const extractedText = await extractTextFromImage(imagePath);
 
-    // Delete uploaded file after OCR (no longer needed)
     try {
       fs.unlinkSync(imagePath);
     } catch (err) {
-      // Ignore deletion errors - response still succeeds
+
     }
 
     if (!extractedText) {
@@ -102,7 +101,7 @@ const extractFromImage = async (req, res) => {
       });
     }
 
-    // Extract structured data from the OCR text using Gemini
+
     const extractedData = await extractStructuredData(extractedText);
 
     if (!extractedData) {

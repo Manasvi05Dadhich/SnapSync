@@ -10,7 +10,7 @@ const protect = require("../middleware/protect");
 
 const router = express.Router();
 
-// All item routes require authentication
+n
 router.use(protect);
 
 router.post("/", createItem);

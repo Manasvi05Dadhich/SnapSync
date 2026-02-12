@@ -3,14 +3,13 @@ const path = require('path');
 
 const extractTextFromImage = (imagePath) => {
   return new Promise((resolve, reject) => {
-    // Path to the Python script
+
     const pythonScript = path.join(__dirname, 'ocr.py');
-    // Use absolute path so Python can find the file regardless of cwd
+
     const absoluteImagePath = path.isAbsolute(imagePath)
       ? imagePath
       : path.resolve(process.cwd(), imagePath);
 
-    // Use 'python' on Windows, 'python3' on Unix
     const pythonCommand = process.platform === 'win32' ? 'python' : 'python3';
 
     const pythonProcess = spawn(pythonCommand, [pythonScript, absoluteImagePath], {

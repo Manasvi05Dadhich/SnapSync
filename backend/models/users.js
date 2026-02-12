@@ -23,13 +23,23 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
-    // Tokens for Google APIs (e.g. Calendar)
     accessToken: {
       type: String,
     },
     refreshToken: {
       type: String,
     },
+
+
+    pushSubscriptions: [
+      {
+        endpoint: String,
+        keys: {
+          p256dh: String,
+          auth: String,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
