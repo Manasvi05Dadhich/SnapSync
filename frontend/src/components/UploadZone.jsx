@@ -162,12 +162,13 @@ export default function UploadZone() {
             {/* Date & Time row */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <p className="text-xs text-gray-500 mb-1">Date</p>
+                <p className="text-xs text-gray-500 mb-1">Date <span className="text-gray-400">(YYYY-MM-DD)</span></p>
                 {editing ? (
                   <input
                     type="date"
                     value={editData?.date || ''}
                     onChange={(e) => fieldChanged('date', e.target.value)}
+                    placeholder="2026-02-14"
                     className="w-full text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lavender focus:border-transparent outline-none"
                   />
                 ) : (
@@ -175,12 +176,13 @@ export default function UploadZone() {
                 )}
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-1">Time</p>
+                <p className="text-xs text-gray-500 mb-1">Time <span className="text-gray-400">(HH:MM)</span></p>
                 {editing ? (
                   <input
                     type="time"
                     value={editData?.time || ''}
                     onChange={(e) => fieldChanged('time', e.target.value)}
+                    placeholder="14:30"
                     className="w-full text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-lavender focus:border-transparent outline-none"
                   />
                 ) : (
