@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
         if (data) {
           setUser(data);
         } else {
-          window.location.href = `${API_BASE}/api/auth/google`;
+          window.location.href = `${API_BASE}/auth/google`;
           return;
         }
       })
@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = () => {
-    window.location.href = `${API_BASE}/api/auth/logout`;
+    window.location.href = `${API_BASE}/auth/logout`;
   };
 
   const isCalendarConnected = !!user?.refreshToken;
