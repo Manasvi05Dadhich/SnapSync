@@ -3,6 +3,8 @@ import { fetchMe } from '../lib/api';
 
 const AuthContext = createContext(null);
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -13,18 +15,18 @@ export function AuthProvider({ children }) {
         if (data) {
           setUser(data);
         } else {
-          window.location.href = '/api/auth/google';
+          window.location.href = `${API_BASE}/api/auth/google`;
           return;
         }
       })
       .catch(() => {
-        window.location.href = '/api/auth/google';
+        window.location.href = `${API_BASE}/api/auth/google`;
       })
       .finally(() => setLoading(false));
   }, []);
 
   const logout = () => {
-    window.location.href = '/api/auth/logout';
+    window.location.href = `${API_BASE}/api/auth/logout`;
   };
 
   const isCalendarConnected = !!user?.refreshToken;

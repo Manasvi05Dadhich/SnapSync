@@ -10,7 +10,7 @@ passport.use(
 
 
       callbackURL:
-        (process.env.FRONTEND_URL || "http://localhost:3000") +
+        (process.env.BACKEND_URL || "http://localhost:5000") +
         "/api/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
