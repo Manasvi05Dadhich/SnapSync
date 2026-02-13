@@ -12,10 +12,19 @@ if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-connectDB().then(() => {
-    startNotificationScheduler();
+const PORT = process.env.PORT || 5000;
+
+// Start server first so Render health checks pass
+app.listen(PORT, () => {
+    console.log(`server running on ${PORT}`);
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`server running on ${process.env.PORT}`);
-});
+// Connect DB after server is up
+connectDB()
+    .then(() => {
+        startNotificationScheduler();
+        console.log('All services started');
+    })
+    .catch((err) => {
+        console.error('DB connection failed:', err.message);
+    });
