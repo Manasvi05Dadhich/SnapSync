@@ -1,5 +1,5 @@
 
-const API = import.meta.env.VITE_API_URL || '/api';
+const API = '/api';
 
 export async function fetchMe() {
   const res = await fetch(`${API}/auth/me`, { credentials: 'include' });
