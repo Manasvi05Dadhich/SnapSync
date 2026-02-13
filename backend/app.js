@@ -10,9 +10,6 @@ require("./configs/passport");
 
 const app = express();
 
-// Trust proxies (Render, Vercel) so secure cookies work
-app.set('trust proxy', 1);
-
 // CORS must come first
 app.use(
   cors({
