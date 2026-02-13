@@ -55,7 +55,7 @@ export default function Header({ pageTitle, action }) {
             </a>
           ) : (
             <a
-              href={`${import.meta.env.VITE_API_URL || ''}/auth/google`}
+              href={`${import.meta.env.VITE_API_URL || '/api'}/auth/google`}
               className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center gap-1.5"
               title="Connect Google Calendar"
             >

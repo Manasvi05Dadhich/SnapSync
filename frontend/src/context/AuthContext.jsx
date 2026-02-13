@@ -3,7 +3,7 @@ import { fetchMe } from '../lib/api';
 
 const AuthContext = createContext(null);
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
         }
       })
       .catch(() => {
-        window.location.href = `${API_BASE}/api/auth/google`;
+        window.location.href = `${API_BASE}/auth/google`;
       })
       .finally(() => setLoading(false));
   }, []);
