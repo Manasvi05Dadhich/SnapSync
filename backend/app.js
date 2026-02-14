@@ -11,7 +11,6 @@ require("./configs/passport");
 
 const app = express();
 
-// Required when behind a reverse proxy (Render, Heroku, etc.) so secure cookies work
 app.set("trust proxy", 1);
 
 app.use(

@@ -11,11 +11,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     fetchMe()
       .then((data) => {
-        if (data) {
-          setUser(data);
-        } else {
-          window.location.href = `${API}/auth/google`;
-        }
+        setUser(data || null);
       })
       .catch(() => {
         setUser(null);
@@ -23,6 +19,10 @@ export function AuthProvider({ children }) {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  const login = () => {
+    window.location.href = `${API}/auth/google`;
+  };
 
   const logout = () => {
     window.location.href = `${API}/auth/logout`;
@@ -33,11 +33,7 @@ export function AuthProvider({ children }) {
     setLoading(true);
     fetchMe()
       .then((data) => {
-        if (data) {
-          setUser(data);
-        } else {
-          window.location.href = `${API}/auth/google`;
-        }
+        setUser(data || null);
       })
       .catch(() => {
         setBackendError(true);
@@ -48,7 +44,7 @@ export function AuthProvider({ children }) {
   const isCalendarConnected = !!user?.refreshToken;
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout, isCalendarConnected, backendError, retryAuth }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isCalendarConnected, backendError, retryAuth }}>
       {children}
     </AuthContext.Provider>
   );
