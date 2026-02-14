@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Calendar, Bell, BellRing, CheckSquare, Inbox, FileText, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { API } from '../lib/api';
 import useNotifications from '../hooks/useNotifications';
 
 const nav = [
@@ -55,7 +56,7 @@ export default function Header({ pageTitle, action }) {
             </a>
           ) : (
             <a
-              href="/api/auth/google"
+              href={`${API}/auth/google`}
               className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center gap-1.5"
               title="Connect Google Calendar"
             >

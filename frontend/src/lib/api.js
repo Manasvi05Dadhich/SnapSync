@@ -1,5 +1,9 @@
+// In production, call backend directly so session cookies (set on backend domain) get sent
+const API = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
 
-const API = '/api';
+export { API };
 
 export async function fetchMe() {
   const res = await fetch(`${API}/auth/me`, { credentials: 'include' });

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { addItemToCalendar, deleteItem } from '../lib/api';
+import { addItemToCalendar, deleteItem, API } from '../lib/api';
 import { useItems } from '../context/ItemsContext';
 import { CalendarPlus, Check, Trash2, Square, CheckSquare } from 'lucide-react';
 
@@ -38,7 +38,7 @@ export default function ItemRow({ item }) {
         errorMessage.includes('expired') ||
         errorMessage.includes('invalid_grant')) {
         // Redirect to re-authenticate with Google
-        window.location.href = '/api/auth/google';
+        window.location.href = `${API}/auth/google`;
         return;
       }
 
