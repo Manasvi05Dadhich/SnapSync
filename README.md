@@ -114,15 +114,10 @@ Visit `http://localhost:3000` and log in with Google!
 - [ ] Push notifications (click bell, create event 16 min away, wait for notification)
 - [ ] Delete items
 
-## Deployment
-
-See [deployment guide](./DEPLOYMENT.md) for instructions on deploying to Vercel (frontend) and Render/Railway (backend).
 
 ## Environment Variables
 
 ### Backend
-| Variable | Description |
-|---|---|
 | `MONGO_URI` | MongoDB connection string |
 | `GEMINI_API_KEY` | Google Gemini API key |
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID |
@@ -135,13 +130,8 @@ See [deployment guide](./DEPLOYMENT.md) for instructions on deploying to Vercel 
 | `VAPID_EMAIL` | Contact email for push service |
 
 ### Frontend
-| Variable | Description |
-|---|---|
+
 | `VITE_API_URL` | Backend API URL |
-
-## Contributing
-
-Pull requests are welcome! Please open an issue first to discuss major changes.
 
 ## License
 

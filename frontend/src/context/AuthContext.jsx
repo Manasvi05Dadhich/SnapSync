@@ -11,7 +11,18 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     fetchMe()
       .then((data) => {
-        setUser(data || null);
+        if (data) {
+          // Successful login — clear the redirect flag
+          sessionStorage.removeItem('snap_auth_attempted');
+          setUser(data);
+        } else if (!sessionStorage.getItem('snap_auth_attempted')) {
+          // First attempt — redirect to Google auth
+          sessionStorage.setItem('snap_auth_attempted', 'true');
+          window.location.href = `${API}/auth/google`;
+        } else {
+          // Already tried redirecting and still no user — stop looping
+          setUser(null);
+        }
       })
       .catch(() => {
         setUser(null);
@@ -20,20 +31,23 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = () => {
-    window.location.href = `${API}/auth/google`;
-  };
-
   const logout = () => {
+    sessionStorage.removeItem('snap_auth_attempted');
     window.location.href = `${API}/auth/logout`;
   };
 
   const retryAuth = () => {
     setBackendError(false);
     setLoading(true);
+    sessionStorage.removeItem('snap_auth_attempted');
     fetchMe()
       .then((data) => {
-        setUser(data || null);
+        if (data) {
+          setUser(data);
+        } else {
+          sessionStorage.setItem('snap_auth_attempted', 'true');
+          window.location.href = `${API}/auth/google`;
+        }
       })
       .catch(() => {
         setBackendError(true);
@@ -44,7 +58,7 @@ export function AuthProvider({ children }) {
   const isCalendarConnected = !!user?.refreshToken;
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isCalendarConnected, backendError, retryAuth }}>
+    <AuthContext.Provider value={{ user, loading, logout, isCalendarConnected, backendError, retryAuth }}>
       {children}
     </AuthContext.Provider>
   );
