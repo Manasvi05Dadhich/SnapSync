@@ -6,7 +6,6 @@ const connectDB = require('./configs/db');
 const app = require('./app');
 const { startNotificationScheduler } = require('./services/notificationService');
 
-// Ensure uploads directory exists
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });

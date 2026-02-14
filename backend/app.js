@@ -11,7 +11,6 @@ require("./configs/passport");
 
 const app = express();
 
-// CORS must come first
 app.use(
   cors({
     origin: [
@@ -22,7 +21,7 @@ app.use(
   })
 );
 
-// Body parsers
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -47,11 +46,10 @@ app.use(
   })
 );
 
-// Passport must come after session
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
+
 app.use("/api/items", itemRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/extract", extractRoutes);
