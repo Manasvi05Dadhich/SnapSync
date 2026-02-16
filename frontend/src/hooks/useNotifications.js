@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { API } from '../lib/api';
+import { API, getAuthHeaders } from '../lib/api';
 
 export default function useNotifications() {
     const [supported, setSupported] = useState(false);
@@ -48,6 +48,7 @@ export default function useNotifications() {
             // Get VAPID public key from backend
             const keyRes = await fetch(`${API}/notifications/vapid-key`, {
                 credentials: 'include',
+                headers: getAuthHeaders(),
             });
             const { publicKey } = await keyRes.json();
 
@@ -70,7 +71,7 @@ export default function useNotifications() {
             await fetch(`${API}/notifications/subscribe`, {
                 method: 'POST',
                 credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                 body: JSON.stringify({ subscription: subscription.toJSON() }),
             });
 
@@ -97,7 +98,7 @@ export default function useNotifications() {
                 await fetch(`${API}/notifications/unsubscribe`, {
                     method: 'DELETE',
                     credentials: 'include',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                     body: JSON.stringify({ endpoint: subscription.endpoint }),
                 });
 

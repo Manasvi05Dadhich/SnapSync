@@ -20,6 +20,7 @@ app.use(
       process.env.BACKEND_URL || "http://localhost:5000"
     ],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 

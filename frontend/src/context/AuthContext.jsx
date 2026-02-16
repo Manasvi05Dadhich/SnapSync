@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { fetchMe, API } from '../lib/api';
+import { fetchMe, API, setToken, clearToken } from '../lib/api';
 
 const AuthContext = createContext(null);
 
@@ -9,20 +9,17 @@ export function AuthProvider({ children }) {
   const [backendError, setBackendError] = useState(false);
 
   useEffect(() => {
+    // After OAuth callback, token is in URL hash - store it and clean URL
+    const hash = window.location.hash;
+    if (hash.startsWith('#token=')) {
+      const token = hash.slice(7);
+      setToken(token);
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+
     fetchMe()
       .then((data) => {
-        if (data) {
-          // Successful login — clear the redirect flag
-          sessionStorage.removeItem('snap_auth_attempted');
-          setUser(data);
-        } else if (!sessionStorage.getItem('snap_auth_attempted')) {
-          // First attempt — redirect to Google auth
-          sessionStorage.setItem('snap_auth_attempted', 'true');
-          window.location.href = `${API}/auth/google`;
-        } else {
-          // Already tried redirecting and still no user — stop looping
-          setUser(null);
-        }
+        setUser(data || null);
       })
       .catch(() => {
         setUser(null);
@@ -31,23 +28,21 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
+  const login = () => {
+    window.location.href = `${API}/auth/google`;
+  };
+
   const logout = () => {
-    sessionStorage.removeItem('snap_auth_attempted');
+    clearToken();
     window.location.href = `${API}/auth/logout`;
   };
 
   const retryAuth = () => {
     setBackendError(false);
     setLoading(true);
-    sessionStorage.removeItem('snap_auth_attempted');
     fetchMe()
       .then((data) => {
-        if (data) {
-          setUser(data);
-        } else {
-          sessionStorage.setItem('snap_auth_attempted', 'true');
-          window.location.href = `${API}/auth/google`;
-        }
+        setUser(data || null);
       })
       .catch(() => {
         setBackendError(true);
@@ -58,7 +53,7 @@ export function AuthProvider({ children }) {
   const isCalendarConnected = !!user?.refreshToken;
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout, isCalendarConnected, backendError, retryAuth }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isCalendarConnected, backendError, retryAuth }}>
       {children}
     </AuthContext.Provider>
   );
