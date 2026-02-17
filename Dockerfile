@@ -6,12 +6,14 @@ RUN apt-get update && apt-get install -y python3 python3-pip && rm -rf /var/lib/
 
 WORKDIR /app
 
-COPY requirements.txt ./
-RUN pip3 install --no-cache-dir -r requirements.txt
+# Copy backend
+COPY backend/ ./
 
-COPY package*.json ./
+# Install Python OCR deps first (easyocr + torch are large)
+RUN pip3 install --break-system-packages -r requirements.txt
+
+# Install Node deps
 RUN npm ci --omit=dev
 
-COPY . .
 EXPOSE 5000
 CMD ["node", "index.js"]
