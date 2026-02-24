@@ -9,7 +9,15 @@ const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
 const VAPID_EMAIL = process.env.VAPID_EMAIL || "mailto:admin@snapsync.app";
 
 if (VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY) {
-    webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+    try {
+        if (typeof webpush.setVapidDetails === 'function') {
+            webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
+        } else {
+            console.warn('webpush.setVapidDetails is not a function. Check web-push version.');
+        }
+    } catch (e) {
+        console.warn('Failed to set VAPID details:', e.message);
+    }
 }
 
 

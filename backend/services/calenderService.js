@@ -1,117 +1,72 @@
-const { google } = require("googleapis");
+let google;
+try {
+  google = require('googleapis').google;
+} catch (e) {
+  console.warn('Google APIs not found. Calendar features will be disabled.');
+}
 
+const oauth2Client = google ? new google.auth.OAuth2(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback'
+) : null;
 
-const createCalendarEvent = async (user, item) => {
-
-  if (!user || !user.refreshToken) {
-    throw new Error("Please reconnect your Google Calendar account to add events");
+/**
+ * Create a Google Calendar event
+ * @param {Object} tokens - User OAuth2 tokens { access_token, refresh_token }
+ * @param {Object} item - Item data { title, date, description }
+ * @returns {Promise<Object>} - Created event data
+ */
+const createCalendarEvent = async (tokens, item) => {
+  if (!google) {
+    throw new Error('Google Calendar integration is not active (missing dependencies). Please run npm install.');
   }
-
-  if (!item.date || !item.time) {
-    throw new Error("Date and time are required to create a calendar event. Please ensure your screenshot includes this information.");
-  }
-
-
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-
-  if (!clientId || !clientSecret) {
-    console.error("Google OAuth credentials not configured");
-    throw new Error("Calendar integration is not properly configured");
-  }
-
-
-  const oAuth2Client = new google.auth.OAuth2(
-    clientId,
-    clientSecret,
-    process.env.GOOGLE_REDIRECT_URI ||
-    `${process.env.BACKEND_URL || "http://localhost:5000"}/api/auth/google/callback`
-  );
-
-  oAuth2Client.setCredentials({
-    access_token: user.accessToken,
-    refresh_token: user.refreshToken,
-  });
-
-  const calendar = google.calendar({ version: "v3", auth: oAuth2Client });
-
-
-  let startDateTime;
-
   try {
-
-    const dateTimeString = `${item.date}T${item.time}:00`;
-    startDateTime = new Date(dateTimeString);
-
-    if (isNaN(startDateTime.getTime())) {
-      throw new Error("Invalid date format");
-    }
-  } catch (error) {
-    console.error("Date parsing error:", { date: item.date, time: item.time, error: error.message });
-    throw new Error(`Unable to parse date/time. Date: "${item.date}", Time: "${item.time}". Please ensure the screenshot has clear date and time information.`);
-  }
-
-
-  const endDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
-
-  const timeZone = process.env.CALENDAR_TIMEZONE || "Asia/Kolkata";
-
-
-  const event = {
-    summary: item.title,
-    description: item.description || "Created via SnapSync",
-    location: item.location || undefined,
-    start: {
-      dateTime: startDateTime.toISOString(),
-      timeZone,
-    },
-    end: {
-      dateTime: endDateTime.toISOString(),
-      timeZone,
-    },
-    conferenceData: {
-      createRequest: {
-        requestId: `snapsync-${item._id || Date.now()}`,
-        conferenceSolutionKey: { type: "hangoutsMeet" },
-      },
-    },
-    reminders: {
-      useDefault: false,
-      overrides: [
-        {
-          method: "popup",
-          minutes: 2 * 24 * 60,
-        },
-      ],
-    },
-  };
-
-  try {
-
-    const response = await calendar.events.insert({
-      calendarId: "primary",
-      requestBody: event,
-      conferenceDataVersion: 1,
+    oauth2Client.setCredentials({
+      access_token: tokens.accessToken,
+      refresh_token: tokens.refreshToken
     });
 
-    console.log("Calendar event created successfully:", {
-      eventId: response.data.id,
-      htmlLink: response.data.htmlLink,
-      title: item.title,
-      startTime: startDateTime.toISOString(),
+    const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+
+    const event = {
+      summary: item.title,
+      description: item.description,
+      start: {
+        dateTime: item.date || new Date().toISOString(),
+        timeZone: 'UTC',
+      },
+      end: {
+        dateTime: item.date ? new Date(new Date(item.date).getTime() + 3600000).toISOString() : new Date(Date.now() + 3600000).toISOString(),
+        timeZone: 'UTC',
+      },
+    };
+
+    const response = await calendar.events.insert({
+      calendarId: 'primary',
+      resource: event,
     });
 
     return response.data;
   } catch (error) {
-    console.error("Google Calendar API error:", error.message);
-
-
-    if (error.code === 401 || error.message.includes("invalid_grant")) {
-      throw new Error("Your Google Calendar connection has expired. Please reconnect your account.");
-    }
-
-    throw new Error(`Failed to create calendar event: ${error.message}`);
+    console.error('Error creating calendar event:', error);
+    throw error;
   }
 };
 
-module.exports = { createCalendarEvent };
+/**
+ * Get OAuth2 Client with refresh token
+ * @param {string} refreshToken 
+ * @returns {Object}
+ */
+const getClientWithToken = (refreshToken) => {
+  if (!oauth2Client) return null;
+  oauth2Client.setCredentials({ refresh_token: refreshToken });
+  return oauth2Client;
+};
+
+module.exports = {
+  createCalendarEvent,
+  getClientWithToken,
+  isEnabled: !!google
+};

@@ -21,7 +21,6 @@ Turn your screenshots into actionable items — events, tasks, reminders, and no
 ## Getting Started
 
 ### Prerequisites
-
 - Node.js (v18+)
 - MongoDB Atlas account
 - Google Cloud Console project (for OAuth & Calendar API)

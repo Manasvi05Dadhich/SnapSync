@@ -1,13 +1,8 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema(
   {
-    googleId: {
-      type: String,
-      unique: true,
-      required: true,
-    },
-
     name: {
       type: String,
       required: true,
@@ -19,17 +14,14 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+    password: {
+      type: String,
+      required: true,
+    },
+
     photo: {
       type: String,
     },
-
-    accessToken: {
-      type: String,
-    },
-    refreshToken: {
-      type: String,
-    },
-
 
     pushSubscriptions: [
       {
@@ -40,8 +32,40 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+
+    // Migration field: keep as optional and non-unique to avoid DB index conflicts
+    googleId: {
+      type: String,
+      unique: false,
+      required: false,
+      default: null,
+    },
+
+    accessToken: {
+      type: String,
+      required: false,
+    },
+
+    refreshToken: {
+      type: String,
+      required: false,
+    },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
+
+// Remove any automatic index synchronization that might fail
+userSchema.set('autoIndex', false);
+
+// Hash password before saving
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+  this.password = await bcrypt.hash(this.password, 12);
+});
+
+// Compare password method
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);

@@ -1,8 +1,8 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Calendar, Bell, BellRing, CheckSquare, Inbox, FileText, Loader2 } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Bell, BellRing, CheckSquare, Inbox, FileText, Loader2, LogOut, Calendar, LayoutGrid, User as UserIcon, Calendar as CalendarIcon, ExternalLink } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { API } from '../lib/api';
 import useNotifications from '../hooks/useNotifications';
+import { API } from '../lib/api';
 
 const nav = [
   { path: '/bucket', label: 'Bucket', icon: Inbox },
@@ -43,28 +43,6 @@ export default function Header({ pageTitle, action }) {
             Bucket
           </Link>
 
-          {isCalendarConnected ? (
-            <a
-              href="https://calendar.google.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center gap-1.5"
-              title="Open Google Calendar"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>Calendar</span>
-            </a>
-          ) : (
-            <a
-              href={`${API}/auth/google`}
-              className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors flex items-center gap-1.5"
-              title="Connect Google Calendar"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>Connect</span>
-            </a>
-          )}
-
           {/* Notification toggle */}
           {supported && permission !== 'denied' && (
             <button
@@ -85,9 +63,41 @@ export default function Header({ pageTitle, action }) {
               )}
             </button>
           )}
+
+          {/* Google Calendar Link - Hybrid Flow */}
+          {isCalendarConnected ? (
+            <a
+              href="https://calendar.google.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-600 hover:bg-blue-100 transition-all text-xs font-medium"
+              title="Open Google Calendar"
+            >
+              <CalendarIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Google Calendar</span>
+              <ExternalLink className="w-3 h-3" />
+            </a>
+          ) : (
+            <a
+              href={`${API}/auth/google`}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all text-xs font-medium border border-slate-200/50"
+              title="Connect Google Calendar"
+            >
+              <CalendarIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Connect Calendar</span>
+            </a>
+          )}
+
+          {/* Logout button */}
+          <button
+            onClick={logout}
+            className="p-1.5 rounded-full text-slate-500 hover:text-slate-900 hover:bg-gray-100 transition-all"
+            title="Logout"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </header>
   );
 }
-

@@ -1,12 +1,10 @@
 import Header from '../components/Header';
 import ItemRow from '../components/ItemRow';
 import { useItems } from '../context/ItemsContext';
-import { useAuth } from '../context/AuthContext';
 import { Bell } from 'lucide-react';
 
 export default function RemindersPage() {
   const { items, loading } = useItems();
-  const { isCalendarConnected } = useAuth();
   const reminders = items.filter((i) => i.type === 'reminder');
 
   return (

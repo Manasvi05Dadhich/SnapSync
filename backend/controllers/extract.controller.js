@@ -3,7 +3,7 @@ const path = require("path");
 const multer = require("multer");
 const { extractStructuredData } = require("../services/geminiService");
 const { extractTextFromImage } = require("../services/ocrService");
-const { createCalendarEvent } = require("../services/calenderService");
+const calenderService = require("../services/calenderService");
 const Item = require("../models/item");
 
 

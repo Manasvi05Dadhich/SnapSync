@@ -6,23 +6,44 @@ const API = import.meta.env.VITE_API_URL
 export { API };
 
 export function getAuthHeaders() {
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
   const headers = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
   return headers;
 }
 
 export function setToken(token) {
-  sessionStorage.setItem('token', token);
+  localStorage.setItem('token', token);
 }
 
 export function clearToken() {
-  sessionStorage.removeItem('token');
+  localStorage.removeItem('token');
+}
+
+export async function loginUser(email, password) {
+  const res = await fetch(`${API}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Login failed');
+  return data;
+}
+
+export async function registerUser(name, email, password) {
+  const res = await fetch(`${API}/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Registration failed');
+  return data;
 }
 
 export async function fetchMe() {
   const res = await fetch(`${API}/auth/me`, {
-    credentials: 'include',
     headers: getAuthHeaders(),
   });
   if (!res.ok) return null;
@@ -31,7 +52,6 @@ export async function fetchMe() {
 
 export async function fetchItems() {
   const res = await fetch(`${API}/items`, {
-    credentials: 'include',
     headers: getAuthHeaders(),
   });
   if (!res.ok) throw new Error('Failed to fetch items');
@@ -43,7 +63,6 @@ export async function uploadImage(file) {
   form.append('image', file);
   const res = await fetch(`${API}/extract/image`, {
     method: 'POST',
-    credentials: 'include',
     headers: getAuthHeaders(),
     body: form,
   });
@@ -54,36 +73,34 @@ export async function uploadImage(file) {
   return res.json();
 }
 
-export async function addItemToCalendar(id) {
-  const res = await fetch(`${API}/items/${id}/add-to-calendar`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: getAuthHeaders(),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error || err.message || 'Failed to add to calendar');
-  }
-  return res.json();
-}
-
 export async function deleteItem(itemId) {
   const res = await fetch(`${API}/items/${itemId}`, {
     method: 'DELETE',
-    credentials: 'include',
     headers: getAuthHeaders(),
   });
   if (!res.ok) throw new Error('Failed to delete item');
   return res.json();
 }
 
-export async function updateItem(itemId, updates) {
-  const res = await fetch(`${API}/items/${itemId}`, {
+export async function updateItem(id, updates) {
+  const res = await fetch(`${API}/items/${id}`, {
     method: 'PUT',
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+    headers: {
+      ...getAuthHeaders(),
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(updates),
   });
   if (!res.ok) throw new Error('Failed to update item');
   return res.json();
+}
+
+export async function addItemToCalendar(id) {
+  const res = await fetch(`${API}/items/${id}/add-to-calendar`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || 'Failed to add to calendar');
+  return data;
 }

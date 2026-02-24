@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { fetchItems, updateItem } from '../lib/api';
+import { useAuth } from './AuthContext';
 
 const ItemsContext = createContext(null);
 
@@ -7,7 +8,10 @@ export function ItemsProvider({ children }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { user } = useAuth();
+
   const refetch = async () => {
+    if (!user) return;
     try {
       const data = await fetchItems();
       setItems(data);
@@ -19,8 +23,13 @@ export function ItemsProvider({ children }) {
   };
 
   useEffect(() => {
-    refetch();
-  }, []);
+    if (user) {
+      refetch();
+    } else {
+      setItems([]);
+      setLoading(false);
+    }
+  }, [user]);
 
   return (
     <ItemsContext.Provider value={{ items, loading, refetch, updateItem }}>

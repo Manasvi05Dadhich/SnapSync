@@ -1,12 +1,10 @@
 import Header from '../components/Header';
 import ItemRow from '../components/ItemRow';
 import { useItems } from '../context/ItemsContext';
-import { useAuth } from '../context/AuthContext';
 import { Calendar } from 'lucide-react';
 
 export default function EventsPage() {
   const { items, loading } = useItems();
-  const { isCalendarConnected } = useAuth();
   const events = items.filter((i) => i.type === 'event');
 
   return (

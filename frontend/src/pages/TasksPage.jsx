@@ -1,12 +1,10 @@
 import Header from '../components/Header';
 import ItemRow from '../components/ItemRow';
 import { useItems } from '../context/ItemsContext';
-import { useAuth } from '../context/AuthContext';
 import { CheckSquare } from 'lucide-react';
 
 export default function TasksPage() {
   const { items, loading } = useItems();
-  const { isCalendarConnected } = useAuth();
   const tasks = items.filter((i) => i.type === 'task');
 
   return (

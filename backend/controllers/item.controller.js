@@ -1,5 +1,5 @@
-const Item = require("../models/item");
-const { createCalendarEvent } = require("../services/calenderService");
+const Item = require('../models/item');
+const calenderService = require('../services/calenderService');
 
 const createItem = async (req, res) => {
   try {
@@ -94,41 +94,36 @@ const deleteItem = async (req, res) => {
     res.status(200).json({
       message: "Item deleted successfully",
     });
-  } catch (error) {
-    res.status(500).json({
-      message: "Unable to delete item",
-      error: error.message,
-    });
+  } catch (err) {
+    res.status(500).json({ message: 'Error deleting item', error: err.message });
   }
 };
 
 const addItemToCalendar = async (req, res) => {
   try {
-    const { id } = req.params;
-    const userId = req.user?._id?.toString();
+    const item = await Item.findById(req.params.id);
+    if (!item) return res.status(404).json({ message: 'Item not found' });
 
-    const item = await Item.findOne({ _id: id, userId });
-    if (!item) {
-      return res.status(404).json({ message: "Item not found" });
+    if (!req.user.refreshToken) {
+      return res.status(400).json({ message: 'Google Calendar not connected' });
     }
 
-    if (item.addedToCalendar) {
-      return res.status(200).json({
-        message: "Already added to calendar",
-        item,
-      });
-    }
+    const event = await calenderService.createCalendarEvent(
+      {
+        accessToken: req.user.accessToken,
+        refreshToken: req.user.refreshToken,
+      },
+      {
+        title: item.title,
+        description: item.description,
+        date: item.date,
+      }
+    );
 
-    await createCalendarEvent(req.user, item);
-    item.addedToCalendar = true;
-    await item.save();
-
-    res.status(200).json({ item });
-  } catch (error) {
-    res.status(500).json({
-      message: "Failed to add to calendar",
-      error: error.message,
-    });
+    res.json({ message: 'Added to Google Calendar', event });
+  } catch (err) {
+    console.error('Calendar error:', err);
+    res.status(500).json({ message: 'Failed to add to calendar', error: err.message });
   }
 };
 

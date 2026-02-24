@@ -1,52 +1,35 @@
-const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const User = require("../models/users");
+let passport;
+let GoogleStrategy;
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+try {
+  passport = require('passport');
+  GoogleStrategy = require('passport-google-oauth20').Strategy;
 
+  const User = require('../models/users');
 
-      callbackURL:
-        (process.env.BACKEND_URL || "http://localhost:5000").replace(/\/$/, "") +
-        "/api/auth/google/callback",
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        let user = await User.findOne({ googleId: profile.id });
-
-        if (!user) {
-          user = new User({
-            googleId: profile.id,
-            email: profile.emails[0].value,
-            name: profile.displayName,
-            photo: profile.photos[0].value,
-          });
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback',
+        passReqToCallback: true,
+      },
+      async (req, accessToken, refreshToken, profile, done) => {
+        try {
+          return done(null, { profile, accessToken, refreshToken });
+        } catch (err) {
+          return done(err);
         }
-
-
-        user.accessToken = accessToken;
-        if (refreshToken) {
-          user.refreshToken = refreshToken;
-        }
-
-        await user.save();
-
-        done(null, user);
-      } catch (err) {
-        done(err, null);
       }
-    }
-  )
-);
+    )
+  );
+} catch (e) {
+  console.warn('Passport or Google Strategy not found. Google login/linking features will be disabled.');
+}
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-  const user = await User.findById(id);
-  done(null, user);
-});
+module.exports = passport || {
+  initialize: () => (req, res, next) => next(),
+  authenticate: () => (req, res, next) => next(),
+  isMock: true
+};

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { fetchMe, API, setToken, clearToken } from '../lib/api';
+import { fetchMe, setToken, clearToken, loginUser, registerUser } from '../lib/api';
 
 const AuthContext = createContext(null);
 
@@ -9,12 +9,15 @@ export function AuthProvider({ children }) {
   const [backendError, setBackendError] = useState(false);
 
   useEffect(() => {
-    // After OAuth callback, token is in URL hash - store it and clean URL
+    // Check for token in URL hash (from Google OAuth callback)
     const hash = window.location.hash;
-    if (hash.startsWith('#token=')) {
-      const token = hash.slice(7);
-      setToken(token);
-      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    if (hash.includes('token=')) {
+      const parts = hash.split('token=');
+      if (parts[1]) {
+        const token = parts[1].split('&')[0];
+        setToken(token);
+        window.location.hash = ''; // Clear hash
+      }
     }
 
     fetchMe()
@@ -28,13 +31,25 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, []);
 
-  const login = () => {
-    window.location.href = `${API}/auth/google`;
+  const isCalendarConnected = !!user?.refreshToken;
+
+  const login = async (email, password) => {
+    const data = await loginUser(email, password);
+    setToken(data.token);
+    setUser(data.user);
+    return data;
+  };
+
+  const register = async (name, email, password) => {
+    const data = await registerUser(name, email, password);
+    setToken(data.token);
+    setUser(data.user);
+    return data;
   };
 
   const logout = () => {
     clearToken();
-    window.location.href = `${API}/auth/logout`;
+    setUser(null);
   };
 
   const retryAuth = () => {
@@ -50,10 +65,8 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   };
 
-  const isCalendarConnected = !!user?.refreshToken;
-
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, isCalendarConnected, backendError, retryAuth }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, backendError, retryAuth, isCalendarConnected }}>
       {children}
     </AuthContext.Provider>
   );

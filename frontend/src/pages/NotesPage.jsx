@@ -1,12 +1,10 @@
 import Header from '../components/Header';
 import ItemRow from '../components/ItemRow';
 import { useItems } from '../context/ItemsContext';
-import { useAuth } from '../context/AuthContext';
 import { FileText } from 'lucide-react';
 
 export default function NotesPage() {
     const { items, loading } = useItems();
-    const { isCalendarConnected } = useAuth();
     const notes = items.filter((i) => i.type === 'note');
 
     return (

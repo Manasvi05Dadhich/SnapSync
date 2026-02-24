@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { addItemToCalendar, deleteItem, API } from '../lib/api';
+import { deleteItem, updateItem, addItemToCalendar } from '../lib/api';
 import { useItems } from '../context/ItemsContext';
-import { CalendarPlus, Check, Trash2, Square, CheckSquare } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Trash2, Square, CheckSquare, CalendarPlus } from 'lucide-react';
 
 const typeColors = {
   event: 'text-slate-700',
@@ -18,36 +19,11 @@ const typeLabels = {
 };
 
 export default function ItemRow({ item }) {
-  const [adding, setAdding] = useState(false);
+  const { isCalendarConnected } = useAuth();
   const [deleting, setDeleting] = useState(false);
+  const [addingToCalendar, setAddingToCalendar] = useState(false);
   const [error, setError] = useState(null);
-  const { refetch, updateItem } = useItems();
-
-  const handleAddToCalendar = async () => {
-    if (item.addedToCalendar) return;
-    setAdding(true);
-    setError(null);
-    try {
-      await addItemToCalendar(item._id);
-      refetch();
-    } catch (err) {
-      // Check if error is related to Google Calendar authentication
-      const errorMessage = err.message || 'Failed to add to calendar';
-
-      if (errorMessage.includes('reconnect') ||
-        errorMessage.includes('expired') ||
-        errorMessage.includes('invalid_grant')) {
-        // Redirect to re-authenticate with Google
-        window.location.href = `${API}/auth/google`;
-        return;
-      }
-
-      // Show the specific error message to the user
-      setError(errorMessage);
-    } finally {
-      setAdding(false);
-    }
-  };
+  const { refetch, updateItem: updateItemContext } = useItems(); // Renamed updateItem from context to avoid conflict with imported updateItem
 
   const handleDelete = async () => {
     if (!confirm('Are you sure you want to delete this item?')) return;
@@ -64,15 +40,25 @@ export default function ItemRow({ item }) {
 
   const handleToggleComplete = async () => {
     try {
-      await updateItem(item._id, { completed: !item.completed });
+      await updateItemContext(item._id, { completed: !item.completed });
       refetch();
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // Only show calendar button for events and reminders
-  const showCalendarButton = item.type === 'event' || item.type === 'reminder';
+  const handleAddToCalendar = async () => {
+    try {
+      setAddingToCalendar(true);
+      setError(null);
+      await addItemToCalendar(item._id);
+      // Optional: show success state or toast
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setAddingToCalendar(false);
+    }
+  };
 
   return (
     <div className="py-4 border-b border-slate-100 last:border-0">
@@ -94,11 +80,11 @@ export default function ItemRow({ item }) {
 
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 ${typeColors[item.type]}`}>
+              <span className={`text - xs font - semibold px - 2.5 py - 1 rounded - full bg - slate - 100 ${typeColors[item.type]} `}>
                 {typeLabels[item.type] || item.type}
               </span>
             </div>
-            <h3 className={`text-base font-semibold text-slate-900 mb-1 ${item.completed ? 'line-through text-slate-400' : ''}`}>
+            <h3 className={`text - base font - semibold text - slate - 900 mb - 1 ${item.completed ? 'line-through text-slate-400' : ''} `}>
               {item.title}
             </h3>
             {(item.date || item.time || item.location) && (
@@ -107,7 +93,7 @@ export default function ItemRow({ item }) {
               </p>
             )}
             {item.description && (
-              <p className={`text-sm text-slate-700 mt-1.5 leading-relaxed ${item.completed ? 'line-through text-slate-400' : ''}`}>
+              <p className={`text - sm text - slate - 700 mt - 1.5 leading - relaxed ${item.completed ? 'line-through text-slate-400' : ''} `}>
                 {item.description}
               </p>
             )}
@@ -115,26 +101,18 @@ export default function ItemRow({ item }) {
         </div>
 
         <div className="flex items-center gap-2">
-          {showCalendarButton && (
-            <>
-              {item.addedToCalendar ? (
-                <span className="flex items-center gap-1.5 text-sm font-medium text-green-600 bg-green-50 px-3 py-1.5 rounded-lg">
-                  <Check className="w-4 h-4" /> Added
-                </span>
-              ) : (
-                <button
-                  onClick={handleAddToCalendar}
-                  disabled={adding}
-                  className="flex items-center gap-1.5 text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-100 px-3 py-1.5 rounded-lg disabled:opacity-50 transition-colors"
-                >
-                  {adding ? 'Adding...' : (
-                    <>
-                      <CalendarPlus className="w-4 h-4" /> Add
-                    </>
-                  )}
-                </button>
-              )}
-            </>
+          {item.type !== 'task' && item.type !== 'note' && (
+            <button
+              onClick={handleAddToCalendar}
+              disabled={addingToCalendar}
+              className={`p - 2 rounded - lg transition - colors ${isCalendarConnected
+                ? 'text-blue-500 hover:text-blue-600 hover:bg-blue-50'
+                : 'text-slate-300 cursor-not-allowed'
+                } `}
+              title={isCalendarConnected ? "Add to Google Calendar" : "Connect Google Calendar in Header"}
+            >
+              <CalendarPlus className={`w - 4 h - 4 ${addingToCalendar ? 'animate-spin' : ''} `} />
+            </button>
           )}
           <button
             onClick={handleDelete}
