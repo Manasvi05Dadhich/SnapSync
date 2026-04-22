@@ -7,6 +7,7 @@ import NotesPage from './pages/NotesPage';
 import EventsPage from './pages/EventsPage';
 import RemindersPage from './pages/RemindersPage';
 import TasksPage from './pages/TasksPage';
+import { Analytics } from '@vercel/analytics/react';
 
 import { useState } from 'react';
 
@@ -141,6 +142,7 @@ export default function App() {
       <AuthProvider>
         <ItemsProvider>
           <AppContent />
+          <Analytics />
         </ItemsProvider>
       </AuthProvider>
     </BrowserRouter>
