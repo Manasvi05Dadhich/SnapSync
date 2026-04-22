@@ -14,7 +14,7 @@ COPY backend/ ./
 RUN pip3 install --no-cache-dir -r requirements.txt
 
 # Install Node deps
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 EXPOSE 5000
 CMD ["node", "index.js"]
